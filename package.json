@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ArthurDelamare/ticktick-api#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
