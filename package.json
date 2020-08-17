@@ -1,0 +1,23 @@
+{
+  "name": "ticktick-api",
+  "version": "1.0.0",
+  "description": "ticktick-api",
+  "main": "ticktick-demo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArthurDelamare/ticktick-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArthurDelamare/ticktick-api/issues"
+  },
+  "homepage": "https://github.com/ArthurDelamare/ticktick-api#readme",
+  "dependencies": {
+    "prettier": "^2.0.5"
+  }
+}
