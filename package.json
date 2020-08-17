@@ -4,6 +4,8 @@
   "description": "ticktick-api",
   "main": "ticktick-demo.js",
   "scripts": {
+    "format": "prettier \"src/**/*.js\" --write",
+    "lint": "eslint \"src/**/*.js\" --quiet",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
