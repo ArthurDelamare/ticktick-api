@@ -18,10 +18,10 @@
   },
   "homepage": "https://github.com/ArthurDelamare/ticktick-api#readme",
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "prettier": "^2.0.5"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "prettier": "^2.0.5",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0"
   }
