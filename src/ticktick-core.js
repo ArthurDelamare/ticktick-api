@@ -101,6 +101,16 @@ module.exports = class TickTickAPI {
     return projectTasks;
   }
 
+  /**
+   * @typedef {Object} Project
+   * @property {string} id
+   * @property {string} name
+   * @property {string} modifiedTime
+   */
+
+  /**
+   * @returns {Project[]}
+   */
   async getProjects() {
     if (!this.cookieHeader) {
       throw new Error("Cookie header is not set.");
@@ -111,9 +121,38 @@ module.exports = class TickTickAPI {
       Cookie: this.cookieHeader,
     };
 
-    const request = await axios.get(url, {
-      headers: headers,
-    });
+    const request = await axios.get(url, { headers: headers });
+
+    return request.data;
+  }
+
+  async getProjectIdFromName(name) {
+    const projects = await this.getProjects();
+
+    const project = projects.find((project) => project.name === name);
+
+    if (!project) {
+      throw new Error("Project not found.");
+    }
+
+    return project.id;
+  }
+
+  /**
+   *
+   * @param {string} id the project ID
+   */
+  async getCompletedTasksOnProject(id = "all") {
+    if (!this.cookieHeader) {
+      throw new Error("Cookie header is not set.");
+    }
+    const url = `https://api.ticktick.com/api/v2/project/${id}/completed/`;
+
+    const headers = {
+      Cookie: this.cookieHeader,
+    };
+
+    const request = await axios.get(url, { headers: headers });
 
     return request.data;
   }
