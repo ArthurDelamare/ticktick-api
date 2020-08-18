@@ -1,6 +1,6 @@
 {
   "name": "ticktick-node-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An API to connect TickTick and retrieve tasks.",
   "main": "src/ticktick-api.js",
   "scripts": {
