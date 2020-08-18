@@ -6,9 +6,11 @@ async function execute() {
 
   await api.login(process.env.TICKTICK_USERNAME, process.env.TICKTICK_PASSWORD);
 
-  api
-    .batchCheck()
-    .then((response) => console.log(response.data))
-    .catch((reason) => console.error(reason));
+  //   api
+  //     .batchCheck()
+  //     .then((response) => console.log(response.data))
+  //     .catch((reason) => console.error(reason));
+  const tasks = await api.getTasksByProjectName("Ligue");
+  console.log(tasks);
 }
 execute();

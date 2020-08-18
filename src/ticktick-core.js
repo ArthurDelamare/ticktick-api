@@ -4,6 +4,11 @@ axios.defaults.withCredentials = true;
 module.exports = class TickTickAPI {
   constructor() {}
 
+  /**
+   * Login to TickTick, necessary to make any other request
+   * @param {string} username
+   * @param {string} password
+   */
   async login(username, password) {
     const url = "https://ticktick.com/api/v2/user/signon?wc=true&remember=true";
 
@@ -12,7 +17,6 @@ module.exports = class TickTickAPI {
       password: password,
     };
     const result = await axios.post(url, options, {
-      withCredentials: true,
       headers: { "Content-Type": "application/json" },
     });
 
@@ -22,15 +26,78 @@ module.exports = class TickTickAPI {
     return result;
   }
 
+  /**
+   * @description send a request to https://ticktick.com/api/v2/batch/check/{id} endpoint
+   * @param {number} id
+   */
   async batchCheck(id = 0) {
-    console.log("batch check");
+    if (!this.cookieHeader) {
+      throw new Error("Cookie header is not set.");
+    }
     const url = `https://ticktick.com/api/v2/batch/check/${id}`;
 
     return axios.get(url, {
-      withCredentials: true,
       headers: {
         Cookie: this.cookieHeader,
       },
     });
+  }
+
+  /**
+   * @param {string} name
+   */
+  async getTasksByProjectName(name) {
+    const batch = await this.batchCheck(1);
+    const projectID = this._getProjectIdFromProjectProfiles(
+      batch.data["projectProfiles"],
+      name
+    );
+    const tasks = this._getTaskByProjectIdAndBatch(projectID, batch.data);
+    return tasks;
+  }
+
+  /**
+   * @param {Object[]} projectProfiles an Array of project details
+   * @param {string} projectProfiles[].id project ID
+   * @param {string} projectProfiles[].name project name
+   * @param {string} projectProfiles[].modifiedTime date of the project last modification
+   * @param {string} name
+   */
+  _getProjectIdFromProjectProfiles(projectProfiles, name = "Ligue") {
+    if (!projectProfiles || projectProfiles.length === 0) {
+      throw new Error("No project has been found.");
+    }
+    const project = projectProfiles.find((project) => project.name === name);
+    if (!project) {
+      throw new Error(`${name} project was not found.`);
+    }
+    return project.id;
+  }
+
+  /**
+   *
+   * @param {string} projectId
+   * @param {Object} batchData
+   * @param {number} batch.checkpoint
+   * @param {Object} batch.syncTaskBean
+   * @param {Object[]} batch.syncTaskBean.update
+   * @param {string} batch.syncTaskBean.update[].id the task ID
+   * @param {string} batch.syncTaskBean.update[].projectId
+   * @param {string} batch.syncTaskBean.update[].title
+   * @param {string} batch.syncTaskBean.update[].modifiedTime
+   * @param {string} batch.syncTaskBean.update[].createdTime
+   */
+  _getTaskByProjectIdAndBatch(projectId, batchData) {
+    if (
+      !batchData.syncTaskBean.update ||
+      batchData.syncTaskBean.update.length === 0
+    ) {
+      throw new Error("Task list was empty.");
+    }
+
+    const projectTasks = batchData.syncTaskBean.update.filter(
+      (task) => task.projectId === projectId
+    );
+    return projectTasks;
   }
 };
