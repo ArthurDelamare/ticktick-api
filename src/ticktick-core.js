@@ -6,10 +6,11 @@ module.exports = class TickTickAPI {
 
   /**
    * Login to TickTick, necessary to make any other request
-   * @param {string} username
-   * @param {string} password
+   * @param {Object} credentials
+   * @param {string} credentials.username
+   * @param {string} credentials.password
    */
-  async login(username, password) {
+  async login({ username, password }) {
     const url = "https://ticktick.com/api/v2/user/signon?wc=true&remember=true";
 
     const options = {
