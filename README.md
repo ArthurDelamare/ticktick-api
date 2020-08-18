@@ -1,4 +1,15 @@
 # TickTick Api
-First of all, this is an unofficial API. Apparently, TickTick is working on an official API and I'm personally building this unofficial one for personal use.
 
-It will soon come out with a documentation, feel free to click on Watch to be aware of the news.
+[Unofficial API]
+
+This API provides functions to get Tasks from TickTick. Features to add, update and deletes tasks are coming.
+
+## Getting Started
+
+### Installation
+
+```bash
+npm install ticktick-node-api
+```
+
+### Usage
