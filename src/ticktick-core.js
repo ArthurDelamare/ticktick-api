@@ -100,4 +100,21 @@ module.exports = class TickTickAPI {
     );
     return projectTasks;
   }
+
+  async getProjects() {
+    if (!this.cookieHeader) {
+      throw new Error("Cookie header is not set.");
+    }
+    const url = "https://api.ticktick.com/api/v2/projects";
+
+    const headers = {
+      Cookie: this.cookieHeader,
+    };
+
+    const request = await axios.get(url, {
+      headers: headers,
+    });
+
+    return request.data;
+  }
 };
