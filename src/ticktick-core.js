@@ -1,27 +1,36 @@
 const axios = require("axios").default;
+axios.defaults.withCredentials = true;
 
 module.exports = class TickTickAPI {
-  /**
-   *
-   * @param {object} options the options to communicate with TickTick
-   * @param {string} options.username the username to connect to TickTick
-   * @param {string} options.password the password to connect to TickTick
-   */
-  constructor(options) {
-    this.login(options.username, options.password);
-  }
+  constructor() {}
 
-  login(username, password) {
+  async login(username, password) {
     const url = "https://ticktick.com/api/v2/user/signon?wc=true&remember=true";
 
     const options = {
       username: username,
       password: password,
     };
+    const result = await axios.post(url, options, {
+      withCredentials: true,
+      headers: { "Content-Type": "application/json" },
+    });
 
-    axios
-      .post(url, options)
-      .then((response) => console.log(response))
-      .catch((reason) => console.log(reason));
+    this.cookies = result.headers["set-cookie"];
+    this.cookieHeader = this.cookies.join("; ") + ";";
+
+    return result;
+  }
+
+  async batchCheck(id = 0) {
+    console.log("batch check");
+    const url = `https://ticktick.com/api/v2/batch/check/${id}`;
+
+    return axios.get(url, {
+      withCredentials: true,
+      headers: {
+        Cookie: this.cookieHeader,
+      },
+    });
   }
 };
