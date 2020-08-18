@@ -1,4 +1,4 @@
-const TickTickAPI = require("./src/ticktick-core.js");
+const TickTickAPI = require("./src/ticktick-api.js");
 require("dotenv").config();
 
 async function execute() {
