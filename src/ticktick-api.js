@@ -31,7 +31,7 @@ module.exports = class TickTickAPI {
    * @description send a request to https://ticktick.com/api/v2/batch/check/{id} endpoint
    * @param {number} id
    */
-  async batchCheck(id = 0) {
+  async _batchCheck(id = 0) {
     if (!this.cookieHeader) {
       throw new Error("Cookie header is not set.");
     }
@@ -50,13 +50,27 @@ module.exports = class TickTickAPI {
    * @param {number} options.status 0 = uncompleted tasks, 2 = completed tasks
    *
    */
-  async getTasksByProjectName({ name, status }) {
-    const batch = await this.batchCheck(1);
-    const projectID = this._getProjectIdFromProjectProfiles(
-      batch.data["projectProfiles"],
-      name
-    );
-    let tasks = this._getTaskByProjectIdAndBatch(projectID, batch.data);
+  async getTasks({ name, status }) {
+    const batch = await this._batchCheck(1);
+
+    if (
+      !batch.data.syncTaskBean.update ||
+      batch.data.syncTaskBean.update.length === 0
+    ) {
+      throw new Error("Task list was empty.");
+    }
+
+    let tasks = batch.data.syncTaskBean.update;
+
+    if (name) {
+      const projectId = this._getProjectIdFromProjectProfiles(
+        batch.data["projectProfiles"],
+        name
+      );
+      tasks = batch.data.syncTaskBean.update.filter(
+        (task) => task.projectId === projectId
+      );
+    }
 
     if (status) {
       tasks = tasks.filter((task) => task.status === status);
@@ -84,34 +98,6 @@ module.exports = class TickTickAPI {
   }
 
   /**
-   *
-   * @param {string} projectId
-   * @param {Object} batchData
-   * @param {number} batch.checkpoint
-   * @param {Object} batch.syncTaskBean
-   * @param {Object[]} batch.syncTaskBean.update
-   * @param {string} batch.syncTaskBean.update[].id
-   * @param {string} batch.syncTaskBean.update[].projectId
-   * @param {string} batch.syncTaskBean.update[].title
-   * @param {string} batch.syncTaskBean.update[].modifiedTime
-   * @param {string} batch.syncTaskBean.update[].createdTime
-   * @returns {Array}
-   */
-  _getTaskByProjectIdAndBatch(projectId, batchData) {
-    if (
-      !batchData.syncTaskBean.update ||
-      batchData.syncTaskBean.update.length === 0
-    ) {
-      throw new Error("Task list was empty.");
-    }
-
-    const projectTasks = batchData.syncTaskBean.update.filter(
-      (task) => task.projectId === projectId
-    );
-    return projectTasks;
-  }
-
-  /**
    * @typedef {Object} Project
    * @property {string} id
    * @property {string} name
@@ -136,6 +122,9 @@ module.exports = class TickTickAPI {
     return request.data;
   }
 
+  /**
+   * @param {string} name name of the project
+   */
   async getProjectIdFromName(name) {
     const projects = await this.getProjects();
 
@@ -150,7 +139,7 @@ module.exports = class TickTickAPI {
 
   /**
    *
-   * @param {string} id the project ID
+   * @param {string} id the project ID, all projects by default
    */
   async getCompletedTasksOnProject(id = "all") {
     if (!this.cookieHeader) {
