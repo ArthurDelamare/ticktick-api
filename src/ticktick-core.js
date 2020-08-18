@@ -45,15 +45,23 @@ module.exports = class TickTickAPI {
   }
 
   /**
-   * @param {string} name
+   * @param {Object} options
+   * @param {string} options.name name of the project
+   * @param {number} options.status 0 = uncompleted tasks, 2 = completed tasks
+   *
    */
-  async getTasksByProjectName(name) {
+  async getTasksByProjectName({ name, status }) {
     const batch = await this.batchCheck(1);
     const projectID = this._getProjectIdFromProjectProfiles(
       batch.data["projectProfiles"],
       name
     );
-    const tasks = this._getTaskByProjectIdAndBatch(projectID, batch.data);
+    let tasks = this._getTaskByProjectIdAndBatch(projectID, batch.data);
+
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status);
+    }
+
     return tasks;
   }
 
@@ -82,11 +90,12 @@ module.exports = class TickTickAPI {
    * @param {number} batch.checkpoint
    * @param {Object} batch.syncTaskBean
    * @param {Object[]} batch.syncTaskBean.update
-   * @param {string} batch.syncTaskBean.update[].id the task ID
+   * @param {string} batch.syncTaskBean.update[].id
    * @param {string} batch.syncTaskBean.update[].projectId
    * @param {string} batch.syncTaskBean.update[].title
    * @param {string} batch.syncTaskBean.update[].modifiedTime
    * @param {string} batch.syncTaskBean.update[].createdTime
+   * @returns {Array}
    */
   _getTaskByProjectIdAndBatch(projectId, batchData) {
     if (

@@ -9,7 +9,7 @@ async function execute() {
     password: process.env.TICKTICK_PASSWORD,
   });
 
-  const tasks = await api.getTasksByProjectName("Ligue");
+  const tasks = await api.getTasksByProjectName({ name: "Ligue", status: 0 });
   console.log(tasks);
 
   //   const projectID = await api.getProjectIdFromName("Ligue");
