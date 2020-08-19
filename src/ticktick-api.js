@@ -72,7 +72,7 @@ module.exports = class TickTickAPI {
       );
     }
 
-    if (status) {
+    if (status != null && status != undefined) {
       tasks = tasks.filter((task) => task.status === status);
     }
 
