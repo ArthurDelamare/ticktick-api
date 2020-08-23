@@ -141,7 +141,7 @@ module.exports = class TickTickAPI {
    *
    * @param {string} id the project ID, all projects by default
    */
-  async getCompletedTasksOnProject(id = "all") {
+  async getCompletedTasksOnProject({id = "all"}) {
     if (!this.cookieHeader) {
       throw new Error("Cookie header is not set.");
     }
