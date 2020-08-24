@@ -141,17 +141,17 @@ module.exports = class TickTickAPI {
    *
    * @param {object} options
    * @param {string} options.id the project ID, all projects by default
-   * @param {Date} options.beginDate start of the date interval
-   * @param {Date} options.endDate end of the date interval
+   * @param {Date} options.begin start of the date interval
+   * @param {Date} options.end end of the date interval
    */
-  async getCompletedTasksOnProject({id = "all", beginDate = initBeginDate(), endDate = new Date()}) {
+  async getCompletedTasks({id = "all", begin = initBeginDate(), end = new Date()}) {
     if (!this.cookieHeader) {
       throw new Error("Cookie header is not set.");
     }
 
-    const beginDateString = `${beginDate.getFullYear()}-${beginDate.getMonth() + 1}-${beginDate.getDate()}%20${beginDate.getUTCHours()}:${beginDate.getMinutes()}:${beginDate.getSeconds()}`;
+    const beginDateString = `${begin.getFullYear()}-${begin.getMonth() + 1}-${begin.getDate()}%20${begin.getUTCHours()}:${begin.getMinutes()}:${begin.getSeconds()}`;
 
-    const endDateString = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}%20${endDate.getUTCHours()}:${endDate.getMinutes()}:${endDate.getSeconds()}`;
+    const endDateString = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()}%20${end.getUTCHours()}:${end.getMinutes()}:${end.getSeconds()}`;
     
     const url = `https://api.ticktick.com/api/v2/project/${id}/completed/?from=${beginDateString}&to=${endDateString}&limit=50`;
 
