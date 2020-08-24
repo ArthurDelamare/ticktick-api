@@ -139,13 +139,21 @@ module.exports = class TickTickAPI {
 
   /**
    *
-   * @param {string} id the project ID, all projects by default
+   * @param {object} options
+   * @param {string} options.id the project ID, all projects by default
+   * @param {Date} options.beginDate start of the date interval
+   * @param {Date} options.endDate end of the date interval
    */
-  async getCompletedTasksOnProject({id = "all"}) {
+  async getCompletedTasksOnProject({id = "all", beginDate = initBeginDate(), endDate = new Date()}) {
     if (!this.cookieHeader) {
       throw new Error("Cookie header is not set.");
     }
-    const url = `https://api.ticktick.com/api/v2/project/${id}/completed/`;
+
+    const beginDateString = `${beginDate.getFullYear()}-${beginDate.getMonth() + 1}-${beginDate.getDate()}%20${beginDate.getUTCHours()}:${beginDate.getMinutes()}:${beginDate.getSeconds()}`;
+
+    const endDateString = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}%20${endDate.getUTCHours()}:${endDate.getMinutes()}:${endDate.getSeconds()}`;
+    
+    const url = `https://api.ticktick.com/api/v2/project/${id}/completed/?from=${beginDateString}&to=${endDateString}&limit=50`;
 
     const headers = {
       Cookie: this.cookieHeader,
@@ -156,3 +164,9 @@ module.exports = class TickTickAPI {
     return request.data;
   }
 };
+
+function initBeginDate() {
+  const date = new Date();
+  date.setDate(date.getDate() - 31);
+  return date;
+}
